@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Young Traveler Guide Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #06b6d4;
+            --accent-color: #10b981;
+            --text-dark: #1f2937;
+            --text-medium: #6b7280;
+            --text-light: #9ca3af;
+            --bg-white: #ffffff;
+            --bg-gray-50: #f9fafb;
+            --bg-gray-100: #f3f4f6;
+            --border-color: #e5e7eb;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-medium);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        /* Page Content */
+        .page {
+            display: none;
+            padding: 1rem 0;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Home Page */
+        .hero {
+            text-align: center;
+            padding: 2.5rem 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            margin: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-medium);
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.4;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-white);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0 1rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .feature-card p {
+            color: var(--text-medium);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* Create Guide Page */
+        .form-container {
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .form-title {
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .children-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .child-input {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .child-input input {
+            flex: 1;
+        }
+
+        .remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .add-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.4rem;
+        }
+
+        .interest-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem;
+            background: var(--bg-gray-50);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .interest-item:hover {
+            background: var(--bg-gray-100);
+        }
+
+        .interest-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .interest-item label {
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Results */
+        .results {
+            display: none;
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bg-gray-100);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .guide-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .guide-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 2px solid var(--primary-color);
+            line-height: 1.2;
+        }
+
+        .activity-card {
+            background: var(--bg-gray-50);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 6px;
+        }
+
+        .activity-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.4rem;
+            font-size: 1rem;
+            line-height: 1.2;
+        }
+
+        .age-tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.4rem;
+        }
+
+        /* Examples Page */
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .example-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .example-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .example-header {
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .example-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(118, 75, 162, 0.85));
+            z-index: 1;
+        }
+
+        .example-header h3,
+        .example-header p {
+            position: relative;
+            z-index: 2;
+        }
+
+        .example-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .example-header p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .example-content {
+            padding: 1.5rem;
+        }
+
+        .example-content p {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+
+        .example-features {
+            list-style: none;
+            margin: 0.75rem 0;
+        }
+
+        .example-features li {
+            padding: 0.4rem 0;
+            border-bottom: 1px solid var(--bg-gray-100);
+            color: var(--text-medium);
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+
+        .example-features li:last-child {
+            border-bottom: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .nav-links {
+                gap: 0.75rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+            
+            .child-input {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-container">
+                <a href="#" class="logo">🌍 Young Traveler Guide Generator</a>
+                <ul class="nav-links">
+                    <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                    <li><a href="#" class="nav-link" data-page="create">Create Guide</a></li>
+                    <li><a href="#" class="nav-link" data-page="examples">View Examples</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>Transform Travel into Learning Adventures</h1>
+                <p>Create personalized educational guides that turn any family vacation into an engaging learning experience for children of all ages.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary" data-page="create">
+                        🚀 Create Your Guide
+                    </a>
+                    <a href="#" class="btn btn-secondary" data-page="examples">
+                        📖 View Examples
+                    </a>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Age-Appropriate Content</h3>
+                    <p>Automatically adjusts learning materials and activities based on your children's ages, from preschoolers to teenagers.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Destination Intelligence</h3>
+                    <p>Comprehensive cultural insights, historical context, and practical information tailored to any travel destination worldwide.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🏃‍♂️</div>
+                    <h3>Interactive Learning</h3>
+                    <p>Engaging missions, scavenger hunts, and hands-on activities that keep children excited about exploring and learning.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍👩‍👧‍👦</div>
+                    <h3>Family-Centered</h3>
+                    <p>Activities designed for the whole family, creating shared learning experiences and lasting memories together.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Educational Excellence</h3>
+                    <p>Covers geography, history, culture, language, science, and practical life skills through immersive travel experiences.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Ready-to-Use Guides</h3>
+                    <p>Downloadable, printable guides with offline access for use during your travels, complete with maps and activity sheets.</p>
+                </div>
+            </div>
+
+            <!-- Bottom CTA Section -->
+            <div style="text-align: center; margin: 1.5rem 0; padding: 2rem; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 16px; box-shadow: var(--shadow);">
+                <h2 style="font-size: 1.6rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.75rem; line-height: 1.2;">Ready to Start Your Educational Adventure?</h2>
+                <p style="color: var(--text-medium); margin-bottom: 1.25rem; font-size: 1rem;">Join thousands of families who've transformed their travels into unforgettable learning experiences.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary" data-page="create">
+                        🚀 Create Your Guide
+                    </a>
+                    <a href="#" class="btn btn-secondary" data-page="examples">
+                        📖 View Examples
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Guide Page -->
+        <div id="create" class="page">
+            <div class="form-container">
+                <h2 class="form-title">Create Your Personalized Travel Guide</h2>
+                
+                <form id="travelForm">
+                    <div class="form-group">
+                        <label class="form-label">Travel Destination</label>
+                        <input type="text" class="form-input" name="destination" placeholder="e.g., Paris, France or Tokyo, Japan" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Your Home Location</label>
+                        <input type="text" class="form-input" name="homeLocation" placeholder="e.g., Seattle, Washington" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Children's Ages</label>
+                        <div id="childrenContainer" class="children-container">
+                            <div class="child-input">
+                                <input type="number" class="form-input" name="childAge" placeholder="Child's Age" min="3" max="17" required>
+                            </div>
+                        </div>
+                        <button type="button" class="add-btn" onclick="addChild()">+ Add Another Child</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Trip Duration</label>
+                        <select class="form-input" name="duration" required>
+                            <option value="">Select Duration</option>
+                            <option value="weekend">Weekend (2-3 days)</option>
+                            <option value="short">Short Trip (4-6 days)</option>
+                            <option value="week">One Week (7-10 days)</option>
+                            <option value="extended">Extended Trip (2+ weeks)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Family Interests (Uncheck those you're not interested in)</label>
+                        <div class="interests-grid">
+                            <div class="interest-item">
+                                <input type="checkbox" name="interests" value="history" id="history" checked>
+                                <label for="history">History & Culture</label>
+                            </div>
+                            <div class="interest-item">
+                                <input type="checkbox" name="interests" value="nature" id="nature" checked>
+                                <label for="nature">Nature & Wildlife</label>
+                            </div>
+                            <div class="interest-item">
+                                <input type="checkbox" name="interests" value="science" id="science" checked>
+                                <label for="science">Science & Technology</label>
+                            </div>
+                            <div class="interest-item">
+                                <input type="checkbox" name="interests" value="art" id="art" checked>
+                                <label for="art">Art & Museums</label>
+                            </div>
+                            <div class="interest-item">
+                                <input type="checkbox" name="interests" value="food" id="food" checked>
+                                <label for="food">Food & Cooking</label>
+                            </div>
+                            <div class="interest-item">
+                                <input type="checkbox" name="interests" value="adventure" id="adventure" checked>
+                                <label for="adventure">Adventure & Outdoor</label>
+                            </div>
+                            <div class="interest-item">
+                                <input type="checkbox" name="interests" value="music" id="music" checked>
+                                <label for="music">Music & Performance</label>
+                            </div>
+                            <div class="interest-item">
+                                <input type="checkbox" name="interests" value="sports" id="sports" checked>
+                                <label for="sports">Sports & Recreation</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                        🚀 Generate Learning Adventure
+                    </button>
+                </form>
+            </div>
+
+            <div id="results" class="results">
+                    <div id="loadingSpinner" class="loading">
+                        <div class="spinner"></div>
+                        <h3>Creating your personalized learning adventure...</h3>
+                        <p>Claude is crafting age-appropriate content and activities specifically for your destination and family. This may take 15-30 seconds.</p>
+                    </div>
+                <div id="generatedContent" style="display: none;">
+                    <!-- Generated content will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Examples Page -->
+        <div id="examples" class="page">
+            <div style="text-align: center; margin: 2rem 0;">
+                <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 1rem;">Example Travel Guides</h1>
+                <p style="font-size: 1.25rem; color: var(--text-medium); max-width: 600px; margin: 0 auto;">Explore sample guides to see how we transform destinations into educational adventures.</p>
+            </div>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-header">
+                        <h3>🏔️ Seattle, Washington</h3>
+                        <p>Pacific Northwest Adventure • Ages 6-12 • 5 Days</p>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>Perfect for:</strong> Families exploring their own region or visitors to the Pacific Northwest</p>
+                        <ul class="example-features">
+                            <li>🌲 Explore temperate rainforest ecosystems</li>
+                            <li>🐟 Learn about salmon life cycles and Indigenous culture</li>
+                            <li>🏭 Discover innovation at tech museums</li>
+                            <li>⛰️ Geography of mountains, sound, and islands</li>
+                            <li>☕ Coffee culture and local food traditions</li>
+                            <li>🎭 Arts scene and music history</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary" onclick="showExampleGuide('seattle')">View Full Guide</a>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <h3>🏝️ Jamaica</h3>
+                        <p>Caribbean Cultural Immersion • Ages 3-6 • 7 Days</p>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>Perfect for:</strong> Families seeking cultural education and tropical adventure</p>
+                        <ul class="example-features">
+                            <li>🎵 Reggae music and cultural heritage</li>
+                            <li>🏛️ History from Taíno peoples to independence</li>
+                            <li>🌿 Tropical ecosystems and unique wildlife</li>
+                            <li>🗣️ Language learning (English and Patois)</li>
+                            <li>🍛 Caribbean cuisine and cooking traditions</li>
+                            <li>🏃‍♂️ Sports culture and Olympic achievements</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary" onclick="showExampleGuide('jamaica')">View Full Guide</a>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <h3>🏮 Vietnam</h3>
+                        <p>Southeast Asian Discovery • Ages 8-14 • 10 Days</p>
+                    </div>
+                    <div class="example-content">
+                        <p><strong>Perfect for:</strong> Families interested in Asian culture and history</p>
+                        <ul class="example-features">
+                            <li>🏯 Ancient civilizations and modern history</li>
+                            <li>🍜 Culinary traditions and street food culture</li>
+                            <li>🚲 Transportation and daily life differences</li>
+                            <li>🌾 Agriculture from rice paddies to coffee</li>
+                            <li>🗣️ Language basics and cultural communication</li>
+                            <li>🎭 Traditional arts, crafts, and festivals</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary" onclick="showExampleGuide('vietnam')">View Full Guide</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let childCount = 1;
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetPage = link.getAttribute('data-page');
+                showPage(targetPage);
+            });
+        });
+
+        document.querySelectorAll('[data-page]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetPage = button.getAttribute('data-page');
+                showPage(targetPage);
+            });
+        });
+
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show target page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Add active class to corresponding nav link
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Add child functionality
+        function addChild() {
+            if (childCount < 5) {
+                childCount++;
+                const container = document.getElementById('childrenContainer');
+                const newChild = document.createElement('div');
+                newChild.className = 'child-input';
+                newChild.innerHTML = `
+                    <input type="number" class="form-input" name="childAge" placeholder="Child's Age" min="3" max="17" required>
+                    <button type="button" class="remove-btn" onclick="removeChild(this)">Remove</button>
+                `;
+                container.appendChild(newChild);
+            }
+        }
+
+        function removeChild(button) {
+            button.parentElement.remove();
+        }
+
+        // Form submission
+        document.getElementById('travelForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            generateGuide();
+        });
+
+        async function generateGuide() {
+            const formData = new FormData(document.getElementById('travelForm'));
+            const destination = formData.get('destination');
+            const homeLocation = formData.get('homeLocation');
+            const duration = formData.get('duration');
+            const childAges = formData.getAll('childAge');
+            const interests = formData.getAll('interests');
+
+            // Show results
+            const resultsDiv = document.getElementById('results');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const generatedContent = document.getElementById('generatedContent');
+            
+            resultsDiv.classList.add('show');
+            loadingSpinner.style.display = 'block';
+            generatedContent.style.display = 'none';
+            
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+
+            try {
+                // Generate guide using Claude API
+                const content = await generateContentWithClaude(destination, homeLocation, duration, childAges, interests);
+                generatedContent.innerHTML = content;
+                loadingSpinner.style.display = 'none';
+                generatedContent.style.display = 'block';
+            } catch (error) {
+                console.error('Error generating guide:', error);
+                generatedContent.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #ef4444;">
+                        <h3>⚠️ Unable to Generate Guide</h3>
+                        <p>There was an error creating your travel guide. Please try again or check your internet connection.</p>
+                        <button class="btn btn-primary" onclick="generateGuide()">Try Again</button>
+                    </div>
+                `;
+                loadingSpinner.style.display = 'none';
+                generatedContent.style.display = 'block';
+            }
+        }
+
+        async function generateContentWithClaude(destination, homeLocation, duration, childAges, interests) {
+            const youngestAge = Math.min(...childAges.map(age => parseInt(age)));
+            const oldestAge = Math.max(...childAges.map(age => parseInt(age)));
+            const ageRange = youngestAge === oldestAge ? `Age ${youngestAge}` : `Ages ${youngestAge}-${oldestAge}`;
+            
+            // Create a comprehensive prompt for Claude
+            const prompt = `Create a comprehensive educational travel guide for a family with children aged ${childAges.join(', ')} visiting ${destination} from ${homeLocation} for a ${duration} trip.
+
+Family Interests: ${interests.join(', ')}
+
+Please create a detailed, engaging travel guide that includes:
+
+1. **Destination Overview**: Age-appropriate cultural context, geography, and what makes this place special compared to ${homeLocation}
+2. **Educational Activities**: 4-6 specific, actionable activities that combine fun with learning, tailored to the age range ${ageRange}
+3. **Learning Missions**: 4-5 hands-on challenges/scavenger hunts that kids can complete during the trip
+4. **Cultural Insights**: Key cultural differences, basic language phrases, customs, and traditions to explore
+5. **Practical Learning**: Currency, climate, transportation, and daily life differences that can become learning opportunities
+
+Format the response as HTML that can be inserted directly into a div, using these CSS classes:
+- .guide-section for main sections with h3 headings
+- .activity-card for individual activities/content blocks
+- .activity-title for activity names
+- .age-tag for age indicators
+
+Make the content:
+- Engaging and age-appropriate for the youngest child (${youngestAge}) but interesting for the oldest (${oldestAge})
+- Specific to ${destination} with real places, foods, and cultural elements
+- Educational but fun, focusing on hands-on experiences
+- Practical for families to actually implement during travel
+- Rich with cultural learning opportunities
+
+Create genuine educational content that transforms travel into active learning experiences.`;
+
+            try {
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        model: "claude-sonnet-4-20250514",
+                        max_tokens: 2000,
+                        messages: [
+                            { role: "user", content: prompt }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                let claudeContent = data.content[0].text;
+
+                // Clean up any potential markdown formatting
+                claudeContent = claudeContent.replace(/```html\n?/g, "").replace(/```\n?/g, "").trim();
+
+                // Add header and footer to the Claude-generated content
+                const fullContent = `
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="font-size: 2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem;">
+                            🌟 Your ${destination} Learning Adventure
+                        </h2>
+                        <p style="font-size: 1.125rem; color: var(--text-medium);">
+                            Customized for ${ageRange} • ${duration.charAt(0).toUpperCase() + duration.slice(1)} Trip
+                        </p>
+                    </div>
+
+                    ${claudeContent}
+
+                    <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: var(--bg-gray-50); border-radius: 12px;">
+                        <h3 style="margin-bottom: 1rem;">📥 Download Your Guide</h3>
+                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                            <button class="btn btn-primary" onclick="downloadGuide()">Download PDF</button>
+                            <button class="btn btn-secondary" onclick="printGuide()">Print Guide</button>
+                            <button class="btn btn-secondary" onclick="createNewGuide()">Create Another</button>
+                        </div>
+                    </div>
+                `;
+
+                return fullContent;
+
+            } catch (error) {
+                console.error('Claude API Error:', error);
+                throw error;
+            }
+        }
+
+        function generateDestinationOverview(destination, youngestAge, homeLocation) {
+            const overviews = {
+                'Paris, France': `Paris is the beautiful capital city of France in Europe! It's famous for the tall Eiffel Tower, amazing art museums, and delicious pastries like croissants. People there speak French and the city has many old castles and churches that are hundreds of years old - much older than most buildings in ${homeLocation}!`,
+                'Tokyo, Japan': `Tokyo is a huge, exciting city in Japan, a country made of islands in Asia! People speak Japanese, use chopsticks to eat, and have incredible technology like super-fast trains. The culture is very different from ${homeLocation} - they even bow to say hello instead of shaking hands!`,
+                'London, England': `London is the capital of England in the United Kingdom! It's famous for red double-decker buses, the Queen's palaces, and Big Ben - a giant clock tower. People speak English like us but with a cool British accent, and they drink lots of tea!`,
+                'Jamaica': `Jamaica is a tropical island in the Caribbean Sea! It's famous for reggae music, beautiful beaches, and friendly people who say "no worries, mon!" The weather is always warm, and you can see amazing blue water and green mountains everywhere.`,
+                'Vietnam': `Vietnam is a long, thin country in Southeast Asia! It has bustling cities, peaceful rice fields, and delicious food like pho soup. People ride motorcycles everywhere, and the culture mixes ancient traditions with modern life.`,
+                'Seattle, Washington': `Seattle is a beautiful city in the Pacific Northwest, surrounded by mountains, forests, and water! It's famous for coffee, technology companies like Microsoft, and the tall Space Needle tower. The weather is different from many places - it rains often but stays green and beautiful all year.`
+            };
+            
+            return overviews[destination] || `${destination} is an exciting place to explore! You'll discover new foods, different languages, unique customs, and amazing sights that are very different from ${homeLocation}. Get ready for an adventure!`;
+        }
+
+        function generateActivities(destination, youngestAge, oldestAge, interests) {
+            let activities = [];
+            
+            if (interests.includes('history')) {
+                activities.push(`
+                    <div class="activity-card">
+                        <div class="activity-title">🏛️ Historical Discovery</div>
+                        <div class="age-tag">Ages ${youngestAge}-${oldestAge}</div>
+                        <p>Explore historical sites with age-appropriate storytelling. Younger children focus on simple stories and visual elements, while older kids learn about timelines and historical connections.</p>
+                    </div>
+                `);
+            }
+
+            if (interests.includes('food')) {
+                activities.push(`
+                    <div class="activity-card">
+                        <div class="activity-title">🍽️ Culinary Adventure</div>
+                        <div class="age-tag">Family-Friendly</div>
+                        <p>Discover local cuisine through market visits and cooking experiences. Learn about ingredients, flavors, and how food reflects culture, with options for all taste preferences.</p>
+                    </div>
+                `);
+            }
+
+            if (interests.includes('nature')) {
+                activities.push(`
+                    <div class="activity-card">
+                        <div class="activity-title">🌿 Nature Exploration</div>
+                        <div class="age-tag">All Ages</div>
+                        <p>Discover local wildlife, plants, and ecosystems through guided nature walks, wildlife spotting, and hands-on environmental learning activities.</p>
+                    </div>
+                `);
+            }
+
+            if (interests.includes('art')) {
+                activities.push(`
+                    <div class="activity-card">
+                        <div class="activity-title">🎨 Art & Culture</div>
+                        <div class="age-tag">Creative Learning</div>
+                        <p>Visit museums, galleries, and cultural sites with interactive art activities. Children create their own artwork inspired by local traditions and techniques.</p>
+                    </div>
+                `);
+            }
+
+            return activities.length > 0 ? activities.join('') : `
+                <div class="activity-card">
+                    <div class="activity-title">🎯 Custom Family Activities</div>
+                    <div class="age-tag">Ages ${youngestAge}-${oldestAge}</div>
+                    <p>Personalized activities based on your destination, including cultural sites, family-friendly attractions, and interactive experiences suitable for your family.</p>
+                </div>
+            `;
+        }
+
+        function generateMissions(destination, youngestAge) {
+            const missionLevels = {
+                simple: [
+                    "Find 5 different colors in local buildings or decorations",
+                    "Learn to say 'hello' and 'thank you' in the local language",
+                    "Count different types of transportation you see",
+                    "Take photos with 3 famous landmarks"
+                ],
+                intermediate: [
+                    "Learn 10 phrases in the local language and use them",
+                    "Compare prices of items to your home city",
+                    "Find examples of local art or traditional decorations",
+                    "Interview a local person about their favorite local tradition"
+                ],
+                advanced: [
+                    "Research a historical event and explain it to your family",
+                    "Create a budget for souvenirs using local currency",
+                    "Document cultural differences in daily life customs",
+                    "Prepare a presentation about local government or traditions"
+                ]
+            };
+
+            const level = youngestAge < 6 ? 'simple' : youngestAge < 10 ? 'intermediate' : 'advanced';
+            
+            return missionLevels[level].map(mission => 
+                `<div class="activity-card">
+                    <div class="activity-title">🎯 ${mission}</div>
+                    <p>Complete this mission during your travels and share your discoveries with the family!</p>
+                </div>`
+            ).join('');
+        }
+
+        function generateCulturalLearning(destination, youngestAge) {
+            return `
+                <div class="activity-card">
+                    <div class="activity-title">🗣️ Language & Communication</div>
+                    <p>Learn essential phrases, greetings, and polite expressions. Practice with locals and observe different communication styles.</p>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-title">🎵 Music & Arts</div>
+                    <p>Experience local music, traditional dances, and artistic expressions. Many cultures have unique instruments and performance styles to discover.</p>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-title">🏠 Daily Life & Customs</div>
+                    <p>Observe how families live, children learn, and communities function. Notice differences in housing, work, and social interactions.</p>
+                </div>
+            `;
+        }
+
+        function generatePracticalInfo(destination, homeLocation, youngestAge) {
+            return `
+                <div class="activity-card">
+                    <div class="activity-title">💱 Currency & Economics</div>
+                    <p>Learn about local money, practice currency conversion, and understand cost differences. Great opportunity for real-world math skills!</p>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-title">🌤️ Climate & Geography</div>
+                    <p>Compare weather patterns, seasons, and geography to ${homeLocation}. Discuss how climate affects culture and daily life.</p>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-title">🚌 Transportation & Navigation</div>
+                    <p>Experience local transportation, practice map reading, and develop navigation skills appropriate for your children's ages.</p>
+                </div>
+            `;
+        }
+
+        function showExampleGuide(destination) {
+            const examples = {
+                seattle: {
+                    title: "Seattle, Washington Learning Adventure",
+                    overview: "Explore the Emerald City's natural beauty, innovation culture, and Pacific Northwest heritage through hands-on activities perfect for curious young minds.",
+                    activities: [
+                        "🌲 Discovery Park nature walk to learn about temperate rainforests",
+                        "🐟 Visit the fish market and learn about Pacific salmon",
+                        "🚀 Interactive exhibits at the Museum of Flight",
+                        "⛰️ Learn about volcanoes and earthquakes at Pacific Science Center",
+                        "☕ Kid-friendly tour of coffee roasting (smell and learn!)",
+                        "🎭 Experience local music at family-friendly venues"
+                    ]
+                },
+                jamaica: {
+                    title: "Jamaica Cultural Immersion Guide",
+                    overview: "Dive into Caribbean culture, music, and history while exploring tropical ecosystems and learning about resilience and community.",
+                    activities: [
+                        "🎵 Reggae music workshop with local musicians",
+                        "🏛️ Visit historical sites with age-appropriate storytelling",
+                        "🌺 Tropical garden exploration and plant identification",
+                        "🗣️ Basic Patois language lessons with fun phrases",
+                        "🍛 Cooking class featuring mild Caribbean flavors",
+                        "🏃‍♂️ Learn about Jamaica's Olympic athletic tradition"
+                    ]
+                },
+                vietnam: {
+                    title: "Vietnam Cultural Discovery Journey",
+                    overview: "Experience the rich blend of ancient traditions and modern life through food, history, and daily cultural practices in Southeast Asia.",
+                    activities: [
+                        "🏮 Traditional craft workshops (lantern making, pottery)",
+                        "🍜 Family cooking class with Vietnamese cuisine",
+                        "🚲 Explore cities by cyclo (bicycle taxi) tours",
+                        "🌾 Visit rice paddies and learn about agriculture",
+                        "🎭 Traditional music and dance performances",
+                        "🏛️ Historical sites with interactive learning experiences"
+                    ]
+                }
+            };
+
+            const guide = examples[destination];
+            alert(`${guide.title}\n\n${guide.overview}\n\nKey Activities:\n${guide.activities.join('\n')}\n\n[In a real implementation, this would show the full detailed guide]`);
+        }
+
+        function downloadGuide() {
+            const content = document.getElementById('generatedContent').innerHTML;
+            const guideName = document.querySelector('h2').textContent || 'Travel Guide';
+            
+            // Create a more detailed guide with additional formatting for download
+            const fullGuide = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${guideName}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
+                        .guide-section { margin-bottom: 30px; }
+                        .activity-card { background: #f9f9f9; padding: 20px; margin: 15px 0; border-left: 4px solid #6366f1; }
+                        .activity-title { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; }
+                        .age-tag { background: #6366f1; color: white; padding: 4px 8px; border-radius: 10px; font-size: 0.8em; display: inline-block; margin-bottom: 10px; }
+                        h2, h3 { color: #1f2937; }
+                        @media print { body { margin: 20px; } }
+                    </style>
+                </head>
+                <body>
+                    ${content.replace(/var\(--[^)]+\)/g, '#6366f1')}
+                    <div style="margin-top: 40px; padding: 20px; background: #f3f4f6; border-radius: 8px;">
+                        <h3>📝 Travel Journal Space</h3>
+                        <p>Use this space to record memories, sketches, and discoveries during your trip:</p>
+                        <div style="border: 1px dashed #ccc; height: 200px; margin: 10px 0;"></div>
+                        <div style="border: 1px dashed #ccc; height: 200px; margin: 10px 0;"></div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob([fullGuide], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${guideName.replace(/[^a-z0-9]/gi, '-')}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('Your travel guide has been downloaded as an HTML file! You can open it in any browser or convert it to PDF using your browser\'s print function.');
+        }
+
+        function printGuide() {
+            window.print();
+        }
+
+        function createNewGuide() {
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('travelForm').reset();
+            
+            // Reset all interest checkboxes to checked
+            document.querySelectorAll('input[name="interests"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            
+            // Reset children inputs
+            childCount = 1;
+            const container = document.getElementById('childrenContainer');
+            container.innerHTML = `
+                <div class="child-input">
+                    <input type="number" class="form-input" name="childAge" placeholder="Child's Age" min="3" max="17" required>
+                </div>
+            `;
+            
+            showPage('create');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.feature-card, .example-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
